@@ -76,12 +76,13 @@ d3.csv("./assets/data/data.csv").then(function(healthData) {
         .append("circle")
         .attr("cx", d => xLinearScale(d[chosenXAxis]))
         .attr("cy", d => yLinearScale(d[chosenYAxis]))
+        .attr("r", 20)
         .attr("class", "stateCircle");
     
     var toolTip = d3.tip()
         .attr("class", "d3-tip")
         .offset([80,-60])
-        .html(d => `${d.state}<br>Poverty: ${d.poverty}%<br>Healthcare: ${healthcare}%`);
+        .html(d => `${d.state}<br>Poverty: ${d.poverty}%<br>Healthcare: ${d.healthcare}%`);
 
     chartGroup.call(toolTip);
 
