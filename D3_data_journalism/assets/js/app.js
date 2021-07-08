@@ -84,8 +84,10 @@ function makeResponsive() {
             .append("circle")
             .attr("cx", d => xLinearScale(d[chosenXAxis]))
             .attr("cy", d => yLinearScale(d[chosenYAxis]))
-            .attr("class", "stateCircle stateText")
-            .attr("text", d => d.abbr);
+            .attr("class", "stateCircle")
+            .append("text")
+            .attr("class", "stateText")
+            .text(d => d.abbr);
         
         var toolTip = d3.tip()
             .attr("class", "d3-tip")
