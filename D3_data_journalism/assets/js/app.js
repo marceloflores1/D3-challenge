@@ -85,7 +85,13 @@ function makeResponsive() {
             .attr("cx", d => xLinearScale(d[chosenXAxis]))
             .attr("cy", d => yLinearScale(d[chosenYAxis]))
             .attr("class", "stateCircle")
+        
+        var textGroup = chartGroup.selectAll("text")
+            .data(healthData)
+            .enter()
             .append("text")
+            .attr("x", d => xLinearScale(d[chosenXAxis]))
+            .attr("y", d => yLinearScale(d[chosenYAxis]))
             .attr("class", "stateText")
             .text(d => d.abbr);
         
