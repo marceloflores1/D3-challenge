@@ -7,7 +7,7 @@ function makeResponsive() {
     };
 
     var svgHeight = window.innerHeight**.85;
-    var svgWidth = window.innerWidth**.95;
+    var svgWidth = window.innerWidth**.9;
 
     var margin = {
         top: 20,
@@ -83,10 +83,10 @@ function makeResponsive() {
             .enter()
             .append("circle")
             .attr("cx", d => xLinearScale(d[chosenXAxis]))
-            .attr("cy", d => yLinearScale(d[chosenYAxis]))
+            .attr("cy", d => yLinearScale(d[chosenYAxis])-3)
             .attr("class", "stateCircle")
         
-        var textGroup = chartGroup.selectAll("text")
+        var textGroup = chartGroup.selectAll("div")
             .data(healthData)
             .enter()
             .append("text")
@@ -95,6 +95,8 @@ function makeResponsive() {
             .attr("class", "stateText")
             .text(d => d.abbr);
         
+        console.log(textGroup);
+
         var toolTip = d3.tip()
             .attr("class", "d3-tip")
             .offset([80,-60])
@@ -103,6 +105,12 @@ function makeResponsive() {
         chartGroup.call(toolTip);
     
         circlesGroup.on("mouseover", function(data) {
+            toolTip.show(data, this);
+        })
+        .on("mouseout", function(data, index) {
+            toolTip.hide(data);
+        });
+        textGroup.on("mouseover", function(data) {
             toolTip.show(data, this);
         })
         .on("mouseout", function(data, index) {
