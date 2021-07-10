@@ -20,16 +20,16 @@ function makeResponsive() {
     var height = svgHeight - margin.top - margin.bottom;
     
     // Create an SVG wrapper, append an SVG group that will hold our chart,
-    // and shift the latter by left and top margins.
     var svg = d3
     .select("#scatter")
     .append("svg")
+    .attr("class", "chart")
     .attr("width", svgWidth)
     .attr("height", svgHeight);
     
     // Append an SVG group
     var chartGroup = svg.append("g")
-    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+      .attr("transform", `translate(${margin.left}, ${margin.top})`);
     
     // Creating axis variables and asigning initial value
     var chosenXAxis = "poverty";
@@ -57,6 +57,7 @@ function makeResponsive() {
         return yLinearScale;
     };
     
+    // Function used to render x-axis with transition
     function renderXAxis(newXScale, xAxis) {
         var bottomAxis = d3.axisBottom(newXScale);
       
@@ -67,6 +68,7 @@ function makeResponsive() {
         return xAxis;
     };
 
+    // Function used to render y-axis with transition
     function renderYAxis(newYScale, yAxis) {
         var leftAxis = d3.axisLeft(newYScale);
         
@@ -77,6 +79,7 @@ function makeResponsive() {
         return yAxis;
     };
 
+    // Function used to render circles with transition
     function renderCircles(circlesGroup, newXScale, chosenXAxis, newYScale, chosenYAxis) {
         circlesGroup.transition()
           .duration(1000)
@@ -86,6 +89,7 @@ function makeResponsive() {
         return circlesGroup;
     };      
 
+    // Function used to render state text with transition
     function renderStates(textGroup, newXScale, chosenXAxis, newYScale, chosenYAxis) {
         textGroup.transition()
           .duration(1000)
@@ -95,6 +99,7 @@ function makeResponsive() {
         return textGroup;
     };
 
+    // Function used to update the tooltip information
     function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup) {
         var xLabel;
         var yLabel;
@@ -138,7 +143,7 @@ function makeResponsive() {
         return circlesGroup;    
     };
     
-    
+    // Import data and define chart
     d3.csv("./assets/data/data.csv").then(function(healthData) {
     
         healthData.forEach(function(data) {
@@ -163,6 +168,7 @@ function makeResponsive() {
         var yAxis = chartGroup.append("g")
             .call(leftAxis);
     
+        // Circles
         var circlesGroup = chartGroup.selectAll("circle")
             .data(healthData)
             .enter()
@@ -171,6 +177,7 @@ function makeResponsive() {
             .attr("cy", d => yLinearScale(d[chosenYAxis])-3)
             .attr("class", "stateCircle")
         
+        // State text
         var textGroup = chartGroup.selectAll("div")
             .data(healthData)
             .enter()
