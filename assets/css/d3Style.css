@@ -183,6 +183,11 @@
   opacity: .5;
 }
 
+.lineText {
+  fill: rgb(255, 119, 0);
+  font-weight: bold;
+}
+
 /* Mobile Rules */
 @media screen and (max-width: 530px) {
   .stateText {

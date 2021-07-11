@@ -124,7 +124,8 @@ function makeResponsive() {
         if (dense === 0) {
             return 0
         }
-        return (mulSum - (sum1 * sum2 / n)) / dense
+        var retRes = (mulSum - (sum1 * sum2 / n)) / dense
+        return retRes.toFixed(4);
     }
 
     // Function used to render circles with transition
@@ -188,9 +189,7 @@ function makeResponsive() {
     }
 
     // Function used to update the tooltip information
-    function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup, newR) {
-        console.log(newR);
-        
+    function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup) {        
         var xLabel;
         var yLabel;
 
@@ -293,6 +292,13 @@ function makeResponsive() {
             .datum(healthData)
             .attr("class", "corrLine")
             .attr("d", line);
+    
+        var newR = corrCoeff(healthData, chosenXAxis, chosenYAxis);
+
+        var lineText = chartGroup.append("text")
+            .attr("transform", `translate (${width-100},${height-20})`)
+            .attr("class", "lineText")
+            .html(`R: ${newR}%`);
 
         // Create group for 3 y-axis labels
         var yLabelsGroup = chartGroup.append("g")
@@ -348,7 +354,6 @@ function makeResponsive() {
         .text("Household Income (Median)");
 
         // Create tooltip
-        var newR = corrCoeff(healthData, chosenXAxis, chosenYAxis);
         var circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup, newR);
 
         // Updating chart on clicking X labels
@@ -365,7 +370,8 @@ function makeResponsive() {
                     textGroup = renderStates(textGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
                     corrLine = renderLine(corrLine, line);
                     newR = corrCoeff(healthData, chosenXAxis, chosenYAxis);
-                    circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup, newR)
+                    lineText = lineText.html(`R: ${newR}%`);
+                    circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup)
                     if (chosenXAxis === "poverty") {
                         xInPoverty.attr("class", "aText activePoverty");
                         xAge.attr("class", "aText inactiveAge");
@@ -396,6 +402,7 @@ function makeResponsive() {
                     textGroup = renderStates(textGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
                     corrLine = renderLine(corrLine, line);
                     newR = corrCoeff(healthData, chosenXAxis, chosenYAxis);
+                    lineText = lineText.html(`R: ${newR}%`);
                     circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup, newR)
                     if (chosenYAxis === "healthcare") {
                         yLacksHealthcare.attr("class", "aText activeHealthcare");
