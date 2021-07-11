@@ -1,3 +1,4 @@
+// Almost all code is inside this function which updates screen size to resize chart
 function makeResponsive() {
 
     var svgArea = d3.select("#scatter").select("svg");
@@ -7,11 +8,11 @@ function makeResponsive() {
     };
 
     var svgHeight = window.innerHeight**.9;
-    var svgWidth = window.innerWidth**.93;
+    var svgWidth = window.innerWidth**.98;
     
     var margin = {
         top: 20,
-        right: 40,
+        right: 0,
         bottom: 130,
         left: 120
       };
@@ -81,20 +82,38 @@ function makeResponsive() {
 
     // Function used to render circles with transition
     function renderCircles(circlesGroup, newXScale, chosenXAxis, newYScale, chosenYAxis) {
+        var circleClass = "";
+        if (chosenXAxis === "poverty") {
+            circleClass = "stateCirclePoverty";
+        } else if (chosenXAxis === "age") {
+            circleClass = "stateCircleAge";
+        } else {
+            circleClass = "stateCircleIncome";
+        };
         circlesGroup.transition()
           .duration(1000)
           .attr("cx", d => newXScale(d[chosenXAxis]))
-          .attr("cy", d => newYScale(d[chosenYAxis])-3);
+          .attr("cy", d => newYScale(d[chosenYAxis])-3)
+          .attr("class", circleClass);
       
         return circlesGroup;
     };      
 
     // Function used to render state text with transition
     function renderStates(textGroup, newXScale, chosenXAxis, newYScale, chosenYAxis) {
+        var textClass = "";
+        if (chosenYAxis === "healthcare"){
+            textClass = "stateTextHealthcare";
+        } else if (chosenYAxis === "smokes"){
+            textClass = "stateTextSmokes";
+        } else {
+            textClass = "ctext stateTextObesity";
+        };
         textGroup.transition()
           .duration(1000)
           .attr("x", d => newXScale(d[chosenXAxis]))
-          .attr("y", d => newYScale(d[chosenYAxis]));
+          .attr("y", d => newYScale(d[chosenYAxis]))
+          .attr("class", textClass);
 
         return textGroup;
     };
@@ -146,6 +165,7 @@ function makeResponsive() {
     // Import data and define chart
     d3.csv("./assets/data/data.csv").then(function(healthData) {
     
+        // Parse data
         healthData.forEach(function(data) {
             data.poverty = +data.poverty;
             data.healthcare = +data.healthcare;
@@ -155,6 +175,7 @@ function makeResponsive() {
             data.smokes = +data.smokes;
         });
     
+        // Creating X & Y axis
         var xLinearScale = xScale(healthData, chosenXAxis);
         var yLinearScale = yScale(healthData, chosenYAxis);
     
@@ -175,7 +196,7 @@ function makeResponsive() {
             .append("circle")
             .attr("cx", d => xLinearScale(d[chosenXAxis]))
             .attr("cy", d => yLinearScale(d[chosenYAxis])-3)
-            .attr("class", "stateCircle")
+            .attr("class", "stateCirclePoverty")
         
         // State text
         var textGroup = chartGroup.selectAll("div")
@@ -184,7 +205,7 @@ function makeResponsive() {
             .append("text")
             .attr("x", d => xLinearScale(d[chosenXAxis]))
             .attr("y", d => yLinearScale(d[chosenYAxis]))
-            .attr("class", "stateText")
+            .attr("class", "stateTextHealthcare")
             .text(d => d.abbr);
         
         
@@ -197,7 +218,7 @@ function makeResponsive() {
         .attr("x", 0 - (height / 2))
         .attr("dy", "1em")
         .attr("value", "healthcare")
-        .attr("class", "aText active")
+        .attr("class", "aText activeHealthcare")
         .text("Lacks Healthcare (%)");
 
         var ySmokes = yLabelsGroup.append("text")
@@ -205,7 +226,7 @@ function makeResponsive() {
         .attr("x", 0 - (height / 2))
         .attr("dy", "1em")
         .attr("value", "smokes")
-        .attr("class", "aText inactive")
+        .attr("class", "aText inactiveSmokes")
         .text("Smokes (%)");
 
         var yObesity = yLabelsGroup.append("text")
@@ -213,7 +234,7 @@ function makeResponsive() {
         .attr("x", 0 - (height / 2))
         .attr("dy", "1em")
         .attr("value", "obesity")
-        .attr("class", "aText inactive")
+        .attr("class", "aText inactiveObesity")
         .text("Obese (%)");
         
         // Create group for 3 x-axis labels
@@ -223,78 +244,84 @@ function makeResponsive() {
         var xInPoverty = xLabelsGroup.append("text")
             .attr("x", 0)
             .attr("y", 0)
-            .attr("value", "poverty") // value to grab for event listener
-            .attr("class", "aText active")
+            .attr("value", "poverty")
+            .attr("class", "aText activePoverty")
             .text("In Poverty (%)");
 
         var xAge = xLabelsGroup.append("text")
         .attr("x", 0)
         .attr("y", 25)
-        .attr("value", "age") // value to grab for event listener
-        .attr("class", "aText inactive")
+        .attr("value", "age")
+        .attr("class", "aText inactiveAge")
         .text("Age (Median)");
 
         var xHouseholdIncome = xLabelsGroup.append("text")
         .attr("x", 0)
         .attr("y", 50)
-        .attr("value", "income") // value to grab for event listener
-        .attr("class", "aText inactive")
+        .attr("value", "income")
+        .attr("class", "aText inactiveIncome")
         .text("Household Income (Median)");
 
+        // Create tooltip
         var circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup);
 
+        // Updating chart on clicking X labels
         xLabelsGroup.selectAll("text")
             .on("click", function() {
                 var value = d3.select(this).attr("value");
                 if (value !== chosenXAxis) {
                     chosenXAxis = value;
-                    xLinearScale = xScale(healthData, chosenXAxis)
+                    // MISSING CIRCLE SURROUNDING POINTER
+                    xLinearScale = xScale(healthData, chosenXAxis);
                     xAxis = renderXAxis(xLinearScale, xAxis);
                     circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
                     textGroup = renderStates(textGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
                     circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup)
                     if (chosenXAxis === "poverty") {
-                        xInPoverty.attr("class", "active");
-                        xAge.attr("class", "inactive");
-                        xHouseholdIncome.attr("class", "inactive");
+                        xInPoverty.attr("class", "aText activePoverty");
+                        xAge.attr("class", "aText inactiveAge");
+                        xHouseholdIncome.attr("class", "aText inactiveIncome");
                     } else if (chosenXAxis === "age") {
-                        xInPoverty.attr("class", "inactive");
-                        xAge.attr("class", "active");
-                        xHouseholdIncome.attr("class", "inactive");
+                        xInPoverty.attr("class", "aText inactivePoverty");
+                        xAge.attr("class", "aText activeAge");
+                        xHouseholdIncome.attr("class", "aText inactiveIncome");
                     } else {
-                        xInPoverty.attr("class", "inactive");
-                        xAge.attr("class", "inactive");
-                        xHouseholdIncome.attr("class", "active");
+                        xInPoverty.attr("class", "aText inactivePoverty");
+                        xAge.attr("class", "aText inactiveAge");
+                        xHouseholdIncome.attr("class", "aText activeIncome");
                     }
-                }
-            })
+                };
+            });
+        
+        // Updating chart on clicking Y labels
         yLabelsGroup.selectAll("text")
             .on("click", function() {
                 var value = d3.select(this).attr("value");
                 if (value !== chosenYAxis) {
                     chosenYAxis = value;
-                    yLinearScale = yScale(healthData, chosenYAxis)
+                    // MISSING CIRCLE SURROUNDING POINTER
+                    yLinearScale = yScale(healthData, chosenYAxis);
                     yAxis = renderYAxis(yLinearScale, yAxis);
                     circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis,yLinearScale, chosenYAxis);
                     textGroup = renderStates(textGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
                     circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup)
                     if (chosenYAxis === "healthcare") {
-                        yLacksHealthcare.attr("class", "active");
-                        ySmokes.attr("class", "inactive");
-                        yObesity.attr("class", "inactive");
+                        yLacksHealthcare.attr("class", "aText activeHealthcare");
+                        ySmokes.attr("class", "aText inactiveSmokes");
+                        yObesity.attr("class", "aText inactiveObesity");
                     } else if (chosenYAxis === "smokes") {
-                        yLacksHealthcare.attr("class", "inactive");
-                        ySmokes.attr("class", "active");
-                        yObesity.attr("class", "inactive");
+                        yLacksHealthcare.attr("class", "aText inactiveHealthcare");
+                        ySmokes.attr("class", "aText activeSmokes");
+                        yObesity.attr("class", "aText inactiveObesity");
                     } else {
-                        yLacksHealthcare.attr("class", "inactive");
-                        ySmokes.attr("class", "inactive");
-                        yObesity.attr("class", "active");
+                        yLacksHealthcare.attr("class", "aText inactiveHealthcare");
+                        ySmokes.attr("class", "aText inactiveSmokes");
+                        yObesity.attr("class", "aText activeObesity");
                     }
-                }
-            })
+                };
+            });
     });
-}
+};
 
 makeResponsive();
 

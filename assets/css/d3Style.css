@@ -4,38 +4,161 @@
   text-anchor: middle;
 }
 
-.active {
+.activeHealthcare {
   font-weight: bold;
-  fill: #000;
+  fill: #00316d;
   transition: fill 0.3s ease-out;
   text-anchor: middle;
 }
 
-.inactive {
+.inactiveHealthcare {
   font-weight: lighter;
-  fill: #c9c9c9;
+  fill: #00316d;
   transition: fill 0.3s ease-out;
   text-anchor: middle;
 }
 
-.inactive:hover {
-  fill: #000;
+.inactiveHealthcare:hover {
+  fill: #00316d;
+  cursor: pointer;
+}
+
+.activeSmokes {
+  font-weight: bold;
+  fill: #6832a5;
+  transition: fill 0.3s ease-out;
+  text-anchor: middle;
+}
+
+.inactiveSmokes {
+  font-weight: lighter;
+  fill: #6832a5;
+  transition: fill 0.3s ease-out;
+  text-anchor: middle;
+}
+
+.inactiveSmokes:hover {
+  fill: #6832a5;
+  cursor: pointer;
+}
+
+.activeObesity {
+  font-weight: bold;
+  fill: #cb0000;
+  transition: fill 0.3s ease-out;
+  text-anchor: middle;
+}
+
+.inactiveObesity {
+  font-weight: lighter;
+  fill: #cb0000;
+  transition: fill 0.3s ease-out;
+  text-anchor: middle;
+}
+
+.inactiveObesity:hover {
+  fill: #cb0000;
+  cursor: pointer;
+}
+
+.activePoverty {
+  font-weight: bold;
+  fill:  #6ae8fe;
+  transition: fill 0.3s ease-out;
+  text-anchor: middle;
+}
+
+.inactivePoverty {
+  font-weight: lighter;
+  fill: #6ae8fe;
+  transition: fill 0.3s ease-out;
+  text-anchor: middle;
+}
+
+.inactivePoverty:hover {
+  fill: #6ae8fe;
+  cursor: pointer;
+}
+
+.activeAge {
+  font-weight: bold;
+  fill:  #d3c055;
+  transition: fill 0.3s ease-out;
+  text-anchor: middle;
+}
+
+.inactiveAge {
+  font-weight: lighter;
+  fill: #cec072;
+  transition: fill 0.3s ease-out;
+  text-anchor: middle;
+}
+
+.inactiveAge:hover {
+  fill: #d3c055;
+  cursor: pointer;
+}
+
+.activeIncome {
+  font-weight: bold;
+  fill:  #79bb3e;
+  transition: fill 0.3s ease-out;
+  text-anchor: middle;
+}
+
+.inactiveIncome {
+  font-weight: lighter;
+  fill: #9bdc62;
+  transition: fill 0.3s ease-out;
+  text-anchor: middle;
+}
+
+.inactiveIncome:hover {
+  fill: #79bb3e;
   cursor: pointer;
 }
 
 /* font size dependent on radius, see app.js */
-.stateText {
+.stateTextHealthcare {
   font-family: sans-serif;
-  fill: #fff;
+  fill: #00316d;
   text-anchor: middle;
   font-size: 8px;
 }
 
-.stateCircle {
-  fill: #89bdd3;
+.stateTextSmokes {
+  font-family: sans-serif;
+  fill: #6832a5;
+  text-anchor: middle;
+  font-size: 8px;
+}
+
+.stateTextObesity {
+  font-family: sans-serif;
+  fill: #cb0000;
+  text-anchor: middle;
+  font-size: 8px;
+}
+
+.stateCirclePoverty {
+  fill: #6ae8fe;
   stroke: #e3e3e3;
   r: 10;
-  opacity: .7;
+  opacity: .6;
+}
+
+.stateCircleAge {
+  fill: #d3c055;
+  stroke: #e3e3e3;
+  r: 10;
+  opacity: .6;
+}
+
+.stateCircleIncome {
+  fill: #79bb3e;
+  stroke: #e3e3e3;
+  r: 10;
+  opacity: .6;
 }
 
 .chart {
