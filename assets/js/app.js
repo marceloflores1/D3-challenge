@@ -1,6 +1,6 @@
 // Almost all code is inside this function which updates screen size to resize chart
 function makeResponsive() {
-
+    var regression;
     var svgArea = d3.select("#scatter").select("svg");
 
     if(!svgArea.empty()) {
@@ -40,8 +40,8 @@ function makeResponsive() {
     function xScale(healthData, chosenXAxis) {
         var xLinearScale = d3.scaleLinear()
             .domain([
-                d3.min(healthData, d => d[chosenXAxis]) * 0.8,
-                d3.max(healthData, d => d[chosenXAxis]) * 1.2
+                d3.min(healthData, d => d[chosenXAxis]) * 0.95,
+                d3.max(healthData, d => d[chosenXAxis]) * 1.05
             ])
             .range([0,width]);
         return xLinearScale;
@@ -79,6 +79,53 @@ function makeResponsive() {
         
         return yAxis;
     };
+
+    // Calculates correlation line
+    function leastSquaresequation(xAxisData, yAxisdata) {
+        var ReduceAddition = function(prev, cur) { return prev + cur; };
+        
+        // finding the mean of Xaxis and Yaxis data
+        var xBar = xAxisData.reduce(ReduceAddition) * 1.0 / xAxisData.length;
+        var yBar = yAxisdata.reduce(ReduceAddition) * 1.0 / yAxisdata.length;
+    
+        var SquareXX = xAxisData.map(function(d) { return Math.pow(d - xBar, 2); })
+          .reduce(ReduceAddition);
+        
+        var ssYY = yAxisdata.map(function(d) { return Math.pow(d - yBar, 2); })
+          .reduce(ReduceAddition);
+          
+        var MeanDiffXY = xAxisData.map(function(d, i) { return (d - xBar) * (yAxisdata[i] - yBar); })
+          .reduce(ReduceAddition);
+          
+        var slope = MeanDiffXY / SquareXX;
+        var intercept = yBar - (xBar * slope);
+        
+    // returning regression function
+        return function(x){
+          return x*slope+intercept
+        }
+    
+    };
+    
+    function corrCoeff (healthData, chosenXAxis, chosenYAxis){
+        var xAxisData = healthData.map(d => d[chosenXAxis]);
+        var yAxisData = healthData.map(d => d[chosenYAxis]);
+        let { min, pow, sqrt } = Math
+        let add = (a, b) => a + b
+        let n = min(xAxisData.length, yAxisData.length)
+        if (n === 0) {
+            return 0
+        }
+        [xAxisData, yAxisData] = [xAxisData.slice(0, n), yAxisData.slice(0, n)]
+        let [sum1, sum2] = [xAxisData, yAxisData].map(l => l.reduce(add))
+        let [pow1, pow2] = [xAxisData, yAxisData].map(l => l.reduce((a, b) => a + pow(b, 2), 0))
+        let mulSum = xAxisData.map((n, i) => n * yAxisData[i]).reduce(add)
+        let dense = sqrt((pow1 - pow(sum1, 2) / n) * (pow2 - pow(sum2, 2) / n))
+        if (dense === 0) {
+            return 0
+        }
+        return (mulSum - (sum1 * sum2 / n)) / dense
+    }
 
     // Function used to render circles with transition
     function renderCircles(circlesGroup, newXScale, chosenXAxis, newYScale, chosenYAxis) {
@@ -118,8 +165,32 @@ function makeResponsive() {
         return textGroup;
     };
 
+    // Function render line
+    function renderLine(corrLine, newLine) {
+        corrLine.transition()
+          .duration(1000)
+          .attr("d", newLine);
+        
+        return corrLine;
+    }
+
+    function createLine(healthData, chosenXAxis, chosenYAxis, xLinearScale, yLinearScale) {
+        var xAxisData = healthData.map(d => d[chosenXAxis]);
+        var yAxisData = healthData.map(d => d[chosenYAxis]);
+        
+        regression = leastSquaresequation(xAxisData, yAxisData);
+        
+        var newLine = d3.line()
+          .x(d => xLinearScale(d[chosenXAxis]))
+          .y(d => yLinearScale(regression(d[chosenXAxis])));
+        
+        return newLine;
+    }
+
     // Function used to update the tooltip information
-    function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup) {
+    function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup, newR) {
+        console.log(newR);
+        
         var xLabel;
         var yLabel;
 
@@ -207,8 +278,22 @@ function makeResponsive() {
             .attr("y", d => yLinearScale(d[chosenYAxis]))
             .attr("class", "stateTextHealthcare")
             .text(d => d.abbr);
+
+        // Correlation Line
+        var xAxisData = healthData.map(d => d[chosenXAxis]);
+        var yAxisData = healthData.map(d => d[chosenYAxis]);
         
-        
+        regression = leastSquaresequation(xAxisData, yAxisData);
+
+        var line = d3.line()
+            .x(d => xLinearScale(d[chosenXAxis]))
+            .y(d => yLinearScale(regression(d[chosenXAxis])));
+
+        var corrLine = chartGroup.append("path")
+            .datum(healthData)
+            .attr("class", "corrLine")
+            .attr("d", line);
+
         // Create group for 3 y-axis labels
         var yLabelsGroup = chartGroup.append("g")
             .attr("transform", "rotate(-90)");
@@ -263,7 +348,8 @@ function makeResponsive() {
         .text("Household Income (Median)");
 
         // Create tooltip
-        var circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup);
+        var newR = corrCoeff(healthData, chosenXAxis, chosenYAxis);
+        var circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup, newR);
 
         // Updating chart on clicking X labels
         xLabelsGroup.selectAll("text")
@@ -274,9 +360,12 @@ function makeResponsive() {
                     // MISSING CIRCLE SURROUNDING POINTER
                     xLinearScale = xScale(healthData, chosenXAxis);
                     xAxis = renderXAxis(xLinearScale, xAxis);
+                    line = createLine(healthData, chosenXAxis, chosenYAxis, xLinearScale, yLinearScale);
                     circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
                     textGroup = renderStates(textGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
-                    circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup)
+                    corrLine = renderLine(corrLine, line);
+                    newR = corrCoeff(healthData, chosenXAxis, chosenYAxis);
+                    circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup, newR)
                     if (chosenXAxis === "poverty") {
                         xInPoverty.attr("class", "aText activePoverty");
                         xAge.attr("class", "aText inactiveAge");
@@ -302,9 +391,12 @@ function makeResponsive() {
                     // MISSING CIRCLE SURROUNDING POINTER
                     yLinearScale = yScale(healthData, chosenYAxis);
                     yAxis = renderYAxis(yLinearScale, yAxis);
+                    line = createLine(healthData, chosenXAxis, chosenYAxis, xLinearScale, yLinearScale);
                     circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis,yLinearScale, chosenYAxis);
                     textGroup = renderStates(textGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
-                    circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup)
+                    corrLine = renderLine(corrLine, line);
+                    newR = corrCoeff(healthData, chosenXAxis, chosenYAxis);
+                    circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup, newR)
                     if (chosenYAxis === "healthcare") {
                         yLacksHealthcare.attr("class", "aText activeHealthcare");
                         ySmokes.attr("class", "aText inactiveSmokes");

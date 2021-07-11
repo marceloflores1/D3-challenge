@@ -23,6 +23,13 @@
   cursor: pointer;
 }
 
+.stateTextHealthcare {
+  font-family: sans-serif;
+  fill: #00316d;
+  text-anchor: middle;
+  font-size: 8px;
+}
+
 .activeSmokes {
   font-weight: bold;
   fill: #6832a5;
@@ -40,6 +47,13 @@
 .inactiveSmokes:hover {
   fill: #6832a5;
   cursor: pointer;
+}
+
+.stateTextSmokes {
+  font-family: sans-serif;
+  fill: #6832a5;
+  text-anchor: middle;
+  font-size: 8px;
 }
 
 .activeObesity {
@@ -61,6 +75,13 @@
   cursor: pointer;
 }
 
+.stateTextObesity {
+  font-family: sans-serif;
+  fill: #cb0000;
+  text-anchor: middle;
+  font-size: 8px;
+}
+
 .activePoverty {
   font-weight: bold;
   fill:  #6ae8fe;
@@ -78,6 +99,13 @@
 .inactivePoverty:hover {
   fill: #6ae8fe;
   cursor: pointer;
+}
+
+.stateCirclePoverty {
+  fill: #6ae8fe;
+  stroke: #e3e3e3;
+  r: 10;
+  opacity: .6;
 }
 
 .activeAge {
@@ -99,6 +127,13 @@
   cursor: pointer;
 }
 
+.stateCircleAge {
+  fill: #d3c055;
+  stroke: #e3e3e3;
+  r: 10;
+  opacity: .6;
+}
+
 .activeIncome {
   font-weight: bold;
   fill:  #79bb3e;
@@ -116,42 +151,6 @@
 .inactiveIncome:hover {
   fill: #79bb3e;
   cursor: pointer;
-}
-
-/* font size dependent on radius, see app.js */
-.stateTextHealthcare {
-  font-family: sans-serif;
-  fill: #00316d;
-  text-anchor: middle;
-  font-size: 8px;
-}
-
-.stateTextSmokes {
-  font-family: sans-serif;
-  fill: #6832a5;
-  text-anchor: middle;
-  font-size: 8px;
-}
-
-.stateTextObesity {
-  font-family: sans-serif;
-  fill: #cb0000;
-  text-anchor: middle;
-  font-size: 8px;
-}
-
-.stateCirclePoverty {
-  fill: #6ae8fe;
-  stroke: #e3e3e3;
-  r: 10;
-  opacity: .6;
-}
-
-.stateCircleAge {
-  fill: #d3c055;
-  stroke: #e3e3e3;
-  r: 10;
-  opacity: .6;
 }
 
 .stateCircleIncome {
@@ -176,6 +175,12 @@
   text-transform: capitalize;
   background: rgba(0, 0, 0, 0.8);
   border-radius: 4px;
+}
+
+.corrLine {
+  stroke: rgb(255, 119, 0);
+  stroke-width: 5px;
+  opacity: .5;
 }
 
 /* Mobile Rules */
