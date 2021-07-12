@@ -188,6 +188,19 @@
   font-weight: bold;
 }
 
+.matrix {
+  text-align: center;
+}
+
+.matrixHeaders {
+  background: #a7dcff;
+  font-weight: bold;
+}
+
+.matrixTitle {
+  font-size: larger;
+}
+
 /* Mobile Rules */
 @media screen and (max-width: 530px) {
   .stateText {

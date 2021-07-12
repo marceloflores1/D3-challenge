@@ -125,7 +125,33 @@ function makeResponsive() {
             return 0
         }
         var retRes = (mulSum - (sum1 * sum2 / n)) / dense
-        return retRes.toFixed(4);
+        var colorCode = "";
+        if (retRes >= .5){
+            colorCode = "#80FF80";
+        } else if (retRes >= .4){
+            colorCode = "#99FF99";
+        } else if (retRes >= .3){
+            colorCode = "#B3FFB3";
+        } else if (retRes >= .2){
+            colorCode = "#D5FFCC";
+        } else if (retRes >= .1){
+            colorCode = "#EAFFE6";
+        } else if (retRes >= 0){
+            colorCode = "#FBFFE6";
+        } else if (retRes >= -.1){
+            colorCode = "#FFEEE6";
+        } else if (retRes >= -.2){
+            colorCode = "#FFE6E6";
+        } else if (retRes >= -.3){
+            colorCode = "#FFCCCC";
+        } else if (retRes >= -.4){
+            colorCode = "#FFB3B3";
+        } else if (retRes >= -.5){
+            colorCode = "#FF9999";
+        } else {
+            colorCode = "#FF8080"
+        };
+        return [retRes.toFixed(4),colorCode];
     }
 
     // Function used to render circles with transition
@@ -298,7 +324,7 @@ function makeResponsive() {
         var lineText = chartGroup.append("text")
             .attr("transform", `translate (${width-100},${height-20})`)
             .attr("class", "lineText")
-            .html(`R: ${newR}%`);
+            .html(`R: ${newR[0]}`);
 
         // Create group for 3 y-axis labels
         var yLabelsGroup = chartGroup.append("g")
@@ -353,6 +379,62 @@ function makeResponsive() {
         .attr("class", "aText inactiveIncome")
         .text("Household Income (Median)");
 
+        var povertyHealthcare = corrCoeff(healthData, "poverty", "healthcare");
+        var ageHealthcare = corrCoeff(healthData, "age", "healthcare");
+        var incomeHealthcare = corrCoeff(healthData, "income", "healthcare");
+        var povertySmokes = corrCoeff(healthData, "poverty", "smokes");
+        var ageSmokes = corrCoeff(healthData, "age", "smokes");
+        var incomeSmokes = corrCoeff(healthData, "income", "smokes");
+        var povertyObesity = corrCoeff(healthData, "poverty", "obesity");
+        var ageObesity = corrCoeff(healthData, "age", "obesity");
+        var incomeObesity = corrCoeff(healthData, "income", "obesity");
+        var tableData = [
+            {
+                label: "Healthcare",
+                first: povertyHealthcare[0],
+                firstColor: povertyHealthcare[1],
+                second: ageHealthcare[0],
+                secondColor: ageHealthcare[1],
+                third: incomeHealthcare[0],
+                thirdColor: incomeHealthcare[1]
+            },
+            {
+                label: "Smokes",
+                first: povertySmokes[0],
+                firstColor: povertySmokes[1],
+                second: ageSmokes[0],
+                secondColor: ageSmokes[1],
+                third: incomeSmokes[0],
+                thirdColor: incomeSmokes[1]
+            },
+            {
+                label: "Obese",
+                first: povertyObesity[0],
+                firstColor: povertyObesity[1],
+                second: ageObesity[0],
+                secondColor: ageObesity[1],
+                third: incomeObesity[0],
+                thirdColor: incomeObesity[1]
+            }
+        ];
+        d3.select("#matrix").html("");
+        var matrix = d3.select("#matrix").append("table").attr("class", "table matrix");
+        var matrixHeader = matrix.append("thead").attr("id", "tablethead")
+          .append("tr")
+          .html(`<th class="matrixHeaders matrixTitle" colspan="4">CORRELATION MATRIX</th>`);
+        d3.select("#tablethead").append("tr").html(`<th class="matrixHeaders"></th><th class="matrixHeaders">Poverty</th><th class="matrixHeaders">Age</th><th class="matrixHeaders">Income</th>`);
+        var matrixBody = matrix.append("tbody")
+          .selectAll("tr")
+          .data(tableData)
+          .enter()
+          .append("tr")
+          .html((d) => `<td class="matrixHeaders">${d.label}</td><td style="background:${d.firstColor};">${d.first}</td><td style="background:${d.secondColor};">${d.second}</td><td style="background:${d.thirdColor};">${d.third}</td>`);
+        d3.select(".matrix")
+        console.log(matrixHeader);
+        console.log(matrixBody);
+        // Creating correlation matrix
+
+
         // Create tooltip
         var circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup, newR);
 
@@ -370,7 +452,7 @@ function makeResponsive() {
                     textGroup = renderStates(textGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
                     corrLine = renderLine(corrLine, line);
                     newR = corrCoeff(healthData, chosenXAxis, chosenYAxis);
-                    lineText = lineText.html(`R: ${newR}%`);
+                    lineText = lineText.html(`R: ${newR[0]}`);
                     circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup)
                     if (chosenXAxis === "poverty") {
                         xInPoverty.attr("class", "aText activePoverty");
@@ -402,7 +484,7 @@ function makeResponsive() {
                     textGroup = renderStates(textGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
                     corrLine = renderLine(corrLine, line);
                     newR = corrCoeff(healthData, chosenXAxis, chosenYAxis);
-                    lineText = lineText.html(`R: ${newR}%`);
+                    lineText = lineText.html(`R: ${newR[0]}`);
                     circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup, newR)
                     if (chosenYAxis === "healthcare") {
                         yLacksHealthcare.attr("class", "aText activeHealthcare");

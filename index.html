@@ -24,18 +24,27 @@
         </div>
       </div>
     </div>
-    <div class="container">
+    <div class="container-fluid">
       <div class="row">
-        <div class="col-xs-12  col-md-12">
-          <div class="article">
-            <h2>Correlations Discovered Between Health Risks and Age, Income</h2>
-            <p>The previous interactive Chart is plotting information from the U.S. Census Bureau and the Behavioral Risk Factor Surveillance System.
+        <div class="col-xs-12  col-md-6">
+          <div class="article text-justify">
+            <h4>Correlations Discovered Between Health Risks and Age, Income</h4>
+            <p>
+              The previous interactive Chart is plotting information from the U.S. Census Bureau and the Behavioral Risk Factor Surveillance System.
               You can click either the X axis or Y axis labels to switch between Risks and Demographics by State. 
             </p>
+            <p>
+              On the Correlation Matrix on the right we can see that there is a slightly strong positive correlation as In Poverty % increases also the Lack of Healthcare %, Smokes % and Obesity %. There is a mild negative correlation with the Age and Household Income Medians in Lacking Healthcare %, as States Medians increase the Lack of Healthcare decreases. Finally there is a strong negative correlation for Smokes % and Obese % when comparing with Median Household Income, wealthy States have less problems with smoking and obesity. 
+            </p>
 
-            <p></p>
+            <p>
 
-            <p></p>
+            </p>
+          </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+          <div id="matrix" class="container">
+            <!-- Append correlation matrix here. -->
           </div>
         </div>
       </div>
