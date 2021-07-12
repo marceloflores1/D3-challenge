@@ -46,3 +46,9 @@ While the ticks on the axes allow us to infer approximate values for each circle
 
 ![Home Screen](Images/home.png)
 
+![Home Screen 2](Images/home2.png)
+
+![Home Screen 3](Images/home3.png)
+
+![Responsive](Images/responsive.png)
+

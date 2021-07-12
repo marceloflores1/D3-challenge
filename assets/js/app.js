@@ -1,3 +1,7 @@
+// Creating axis variables and asigning initial value
+var chosenXAxis = "poverty";
+var chosenYAxis = "healthcare";
+
 // Almost all code is inside this function which updates screen size to resize chart
 function makeResponsive() {
     var regression;
@@ -31,10 +35,6 @@ function makeResponsive() {
     // Append an SVG group
     var chartGroup = svg.append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
-    
-    // Creating axis variables and asigning initial value
-    var chosenXAxis = "poverty";
-    var chosenYAxis = "healthcare";
     
     // Function used for updating x-scale var upon click on axis label
     function xScale(healthData, chosenXAxis) {
