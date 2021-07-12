@@ -39,19 +39,19 @@
 
 .inactiveSmokes {
   font-weight: lighter;
-  fill: #6832a5;
+  fill: #9b32a5;
   transition: fill 0.3s ease-out;
   text-anchor: middle;
 }
 
 .inactiveSmokes:hover {
-  fill: #6832a5;
+  fill: #9b32a5;
   cursor: pointer;
 }
 
 .stateTextSmokes {
   font-family: sans-serif;
-  fill: #6832a5;
+  fill: #9b32a5;
   text-anchor: middle;
   font-size: 8px;
 }
